@@ -10,7 +10,7 @@ import React, {
   Text,
   View
 } from 'react-native';
-var Button = require('react-native-button');
+import Button from 'react-native-button';
 
 class PlaceRoulette extends Component {
   render() {
