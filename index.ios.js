@@ -34,20 +34,11 @@ class PlaceRoulette extends Component {
 
   _handleRoulettePress(event) {
     console.log('Pressed!');
-    Location.requestWhenInUseAuthorization();
-    Location.getAuthorizationStatus(function(authorization) {
-      if(authorization === "authorizedWhenInUse") {
-        AlertIOS.alert(
-         'Thanks!',
-         'Searching for a place...',
-        );
-      }
-      else {
-        AlertIOS.alert(
-         'Oops!',
-         "We need location permissions to know what's closeby.",
-        );
-      }
+    navigator.geolocation.getCurrentPosition((position) => {
+      AlertIOS.alert(
+       'Thanks!',
+       "Your current position is: " + JSON.stringify(position),
+      );
     });
   }
 }
