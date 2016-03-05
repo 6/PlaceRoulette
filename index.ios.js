@@ -19,12 +19,31 @@ class PlaceRoulette extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loadingPosition: false,
+      loading: false,
     };
     this._handleRoulettePress = this._handleRoulettePress.bind(this);
   }
 
   render() {
+    if(this.state.loading) {
+      return this._renderLoadingView();
+    }
+    else {
+      return this._renderRouletteView();
+    }
+  }
+
+  _renderLoadingView() {
+    return (
+      <View style={styles.container}>
+        <View style={styles.loadingTextContainer}>
+          <Text style={styles.loadingText}>Loading...</Text>
+        </View>
+      </View>
+    );
+  }
+
+  _renderRouletteView() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
@@ -36,25 +55,22 @@ class PlaceRoulette extends Component {
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
           Spin!
         </Button>
-        <View style={styles.loadingTextContainer}>
-          {this.state.loadingPosition ? <Text style={styles.loadingText}>Loading...</Text> : null }
-        </View>
       </View>
     );
   }
 
   _handleRoulettePress(event) {
-    this.setState({loadingPosition: true});
+    this.setState({loading: true});
     navigator.geolocation.getCurrentPosition(
       (position) => {
-        this.setState({loadingPosition: false});
+        this.setState({loading: false});
         AlertIOS.alert(
          'Thanks!',
          "Your current position is: " + JSON.stringify(position),
         );
       },
       (error) => {
-        this.setState({loadingPosition: false});
+        this.setState({loading: false});
         alert(error.message);
       },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
@@ -93,12 +109,9 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: 'green',
   },
-  loadingTextContainer: {
-    height: 30,
-  },
   loadingText: {
-    marginTop: 20,
-    color: '#999',
+    fontSize: 24,
+    color: '#bbb',
   },
 });
 
