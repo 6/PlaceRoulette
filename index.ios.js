@@ -20,7 +20,7 @@ class PlaceRoulette extends Component {
           Place Roulette
         </Text>
         <Text style={styles.instructions}>
-          Give it a spin to choose a random place within 0.5 miles.
+          Choose a random place within 0.5 miles:
         </Text>
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
           Spin!
@@ -43,22 +43,26 @@ const styles = StyleSheet.create({
     padding: 30,
   },
   welcome: {
-    fontSize: 20,
+    fontSize: 30,
     textAlign: 'center',
     margin: 10,
   },
   instructions: {
     textAlign: 'center',
     color: '#333333',
+    fontSize: 18,
     marginBottom: 40,
   },
   rouletteButton: {
-    padding: 20,
+    paddingTop: 24,
+    paddingBottom: 24,
+    paddingLeft: 40,
+    paddingRight: 40,
     backgroundColor: 'orange',
     borderRadius: 20,
   },
   rouletteButtonText: {
-    fontSize: 32,
+    fontSize: 36,
     color: 'green',
   }
 });
