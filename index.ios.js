@@ -16,6 +16,14 @@ import Button from 'react-native-button';
 var { RNLocation: Location } = require('NativeModules');
 
 class PlaceRoulette extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loadingPosition: false,
+    };
+    this._handleRoulettePress = this._handleRoulettePress.bind(this);
+  }
+
   render() {
     return (
       <View style={styles.container}>
@@ -28,20 +36,27 @@ class PlaceRoulette extends Component {
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
           Spin!
         </Button>
+        <View style={styles.loadingTextContainer}>
+          {this.state.loadingPosition ? <Text style={styles.loadingText}>Loading...</Text> : null }
+        </View>
       </View>
     );
   }
 
   _handleRoulettePress(event) {
-    console.log('Pressed!');
+    this.setState({loadingPosition: true});
     navigator.geolocation.getCurrentPosition(
       (position) => {
+        this.setState({loadingPosition: false});
         AlertIOS.alert(
          'Thanks!',
          "Your current position is: " + JSON.stringify(position),
         );
       },
-      (error) => alert(error.message),
+      (error) => {
+        this.setState({loadingPosition: false});
+        alert(error.message);
+      },
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
   }
@@ -62,7 +77,7 @@ const styles = StyleSheet.create({
   },
   instructions: {
     textAlign: 'center',
-    color: '#333333',
+    color: '#555',
     fontSize: 18,
     marginBottom: 40,
   },
@@ -77,7 +92,14 @@ const styles = StyleSheet.create({
   rouletteButtonText: {
     fontSize: 36,
     color: 'green',
-  }
+  },
+  loadingTextContainer: {
+    height: 30,
+  },
+  loadingText: {
+    marginTop: 20,
+    color: '#999',
+  },
 });
 
 AppRegistry.registerComponent('PlaceRoulette', () => PlaceRoulette);
