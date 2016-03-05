@@ -4,13 +4,16 @@
  */
 'use strict';
 import React, {
+  AlertIOS,
   AppRegistry,
   Component,
+  DeviceEventEmitter,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 import Button from 'react-native-button';
+var { RNLocation: Location } = require('NativeModules');
 
 class PlaceRoulette extends Component {
   render() {
@@ -31,6 +34,21 @@ class PlaceRoulette extends Component {
 
   _handleRoulettePress(event) {
     console.log('Pressed!');
+    Location.requestWhenInUseAuthorization();
+    Location.getAuthorizationStatus(function(authorization) {
+      if(authorization === "authorizedWhenInUse") {
+        AlertIOS.alert(
+         'Thanks!',
+         'Searching for a place...',
+        );
+      }
+      else {
+        AlertIOS.alert(
+         'Oops!',
+         "We need location permissions to know what's closeby.",
+        );
+      }
+    });
   }
 }
 
