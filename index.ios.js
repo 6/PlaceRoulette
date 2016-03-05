@@ -34,12 +34,16 @@ class PlaceRoulette extends Component {
 
   _handleRoulettePress(event) {
     console.log('Pressed!');
-    navigator.geolocation.getCurrentPosition((position) => {
-      AlertIOS.alert(
-       'Thanks!',
-       "Your current position is: " + JSON.stringify(position),
-      );
-    });
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        AlertIOS.alert(
+         'Thanks!',
+         "Your current position is: " + JSON.stringify(position),
+        );
+      },
+      (error) => alert(error.message),
+      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
+    );
   }
 }
 
