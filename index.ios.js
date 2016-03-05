@@ -10,23 +10,27 @@ import React, {
   Text,
   View
 } from 'react-native';
+var Button = require('react-native-button');
 
 class PlaceRoulette extends Component {
   render() {
     return (
       <View style={styles.container}>
         <Text style={styles.welcome}>
-          Welcome to React Native!
+          Place Roulette
         </Text>
         <Text style={styles.instructions}>
-          To get started, edit index.ios.js
+          Give it a spin to choose a random place within 0.5 miles.
         </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
+          Spin!
+        </Button>
       </View>
     );
+  }
+
+  _handleRoulettePress(event) {
+    console.log('Pressed!');
   }
 }
 
@@ -35,7 +39,8 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#fafafa',
+    padding: 30,
   },
   welcome: {
     fontSize: 20,
@@ -45,8 +50,17 @@ const styles = StyleSheet.create({
   instructions: {
     textAlign: 'center',
     color: '#333333',
-    marginBottom: 5,
+    marginBottom: 40,
   },
+  rouletteButton: {
+    padding: 20,
+    backgroundColor: 'orange',
+    borderRadius: 20,
+  },
+  rouletteButtonText: {
+    fontSize: 32,
+    color: 'green',
+  }
 });
 
 AppRegistry.registerComponent('PlaceRoulette', () => PlaceRoulette);
