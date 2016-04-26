@@ -4,6 +4,7 @@
  */
 'use strict';
 import React, {
+  ActivityIndicatorIOS,
   AlertIOS,
   AppRegistry,
   Component,
@@ -47,9 +48,7 @@ class PlaceRoulette extends Component {
   _renderLoadingView() {
     return (
       <View style={styles.container}>
-        <View style={styles.loadingTextContainer}>
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <ActivityIndicatorIOS animating={true} style={styles.loadingIndicator} size="large" />
       </View>
     );
   }
@@ -152,9 +151,9 @@ const styles = StyleSheet.create({
     fontSize: 36,
     color: 'green',
   },
-  loadingText: {
-    fontSize: 24,
-    color: '#bbb',
+  loadingIndicator: {
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   photo: {
     width: 300,
