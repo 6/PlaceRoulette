@@ -17,15 +17,15 @@ import React, {
 } from 'react-native';
 import Button from 'react-native-button';
 import Qs from 'qs';
-import Secrets from './secrets';
+import PlacePicker from './place.picker';
 
 class PlaceRoulette extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
-      searchRadius: 1000, // meters
-      placeType: "restaurant", // cafe, bar, night_club, bakery, store
+      searchRadius: 1000,
+      placeType: "restaurant",
     };
     this._handleRoulettePress = this._handleRoulettePress.bind(this);
     this._openPlaceInMaps = this._openPlaceInMaps.bind(this);
@@ -72,10 +72,10 @@ class PlaceRoulette extends Component {
 
   _renderPlaceView() {
     let photo = null;
-    if (this.state.placePhotoUrl) {
+    if (this.state.place.photoUrl) {
       photo = (
         <TouchableHighlight onPress={this._openPlaceInMaps}>
-          <Image style={styles.photo} source={{uri: this.state.placePhotoUrl}} />
+          <Image style={styles.photo} source={{uri: this.state.place.photoUrl}} />
         </TouchableHighlight>
       )
     }
@@ -97,33 +97,17 @@ class PlaceRoulette extends Component {
 
   _handleRoulettePress(event) {
     this.setState({loading: true});
-    this._getCurrentLocation(
-      (position) => {
-        this._findNearbyPlaces(
-          position.coords.latitude,
-          position.coords.longitude,
-          (places) => {
-            let place = places[Math.floor(Math.random()*places.length)];
-            let placePhotoUrl = null;
-            if (place.photos && place.photos.length > 0) {
-              placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?" + Qs.stringify({
-                photoreference: place.photos[0].photo_reference,
-                maxwidth: 600,
-                maxheight: 400,
-                key: Secrets.GOOGLE_PLACES_API_KEY,
-              });
-            }
-            this.setState({
-              loading: false,
-              place: place,
-              placePhotoUrl: placePhotoUrl,
-            });
-          },
-          this._onLoadingLocationError,
-        );
+    let placePicker = new PlacePicker({
+      type: this.state.placeType,
+      radius: this.state.searchRadius,
+      photoMaxWidth: 600,
+      photoMaxHeight: 400,
+      onSuccess: (place) => {
+        this.setState({loading: false, place: place});
       },
-      this._onLoadingLocationError,
-    )
+      onError: this._onLoadingLocationError,
+    });
+    placePicker.getRandomPlace();
   }
 
   _openPlaceInMaps(event) {
@@ -134,42 +118,6 @@ class PlaceRoulette extends Component {
   _onLoadingLocationError(errorMessage) {
     this.setState({loading: false});
     alert(errorMessage);
-  }
-
-  _getCurrentLocation(onSuccess, onError) {
-    navigator.geolocation.getCurrentPosition(
-      onSuccess,
-      (error) => onError(error.message),
-      {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
-    );
-  }
-
-  _findNearbyPlaces(latitude, longitude, onSuccess, onError) {
-    let url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' + Qs.stringify({
-      location: [latitude, longitude].join(","),
-      radius: this.state.searchRadius,
-      opennow: "true",
-      type: this.state.placeType,
-      key: Secrets.GOOGLE_PLACES_API_KEY,
-    });
-    fetch(url, {method: 'GET'})
-      .then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.status === "OK" && responseJson.results.length > 0) {
-          onSuccess(responseJson.results);
-        }
-        else if (responseJson.status === "ZERO_RESULTS") {
-          onError("No places found that are currently open.")
-        }
-        else {
-          console.log(responseJson);
-          onError("Invalid request to Google Places API.");
-        }
-      })
-      .catch((error) => {
-        console.log(error);
-        onError("Unable to reach Google Places API.");
-      });
   }
 }
 
