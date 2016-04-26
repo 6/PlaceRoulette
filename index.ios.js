@@ -158,8 +158,8 @@ class PlaceRoulette extends Component {
         if (responseJson.status === "OK" && responseJson.results.length > 0) {
           onSuccess(responseJson.results);
         }
-        else if (responseJson.status === "OK") {
-          onError("No places found that are nearby and currently open.")
+        else if (responseJson.status === "ZERO_RESULTS") {
+          onError("No places found that are currently open.")
         }
         else {
           console.log(responseJson);
