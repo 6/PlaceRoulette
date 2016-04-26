@@ -11,6 +11,8 @@ import React, {
   StyleSheet,
   Text,
   Image,
+  Linking,
+  TouchableHighlight,
   View
 } from 'react-native';
 import Button from 'react-native-button';
@@ -26,6 +28,7 @@ class PlaceRoulette extends Component {
       placeType: "restaurant", // cafe, bar, night_club, bakery, store
     };
     this._handleRoulettePress = this._handleRoulettePress.bind(this);
+    this._openPlaceInMaps = this._openPlaceInMaps.bind(this);
     this._onLoadingLocationError = this._onLoadingLocationError.bind(this);
   }
 
@@ -68,17 +71,21 @@ class PlaceRoulette extends Component {
   }
 
   _renderPlaceView() {
-    var photo = null;
+    let photo = null;
     if (this.state.placePhotoUrl) {
-      photo = <Image style={styles.photo} source={{uri: this.state.placePhotoUrl}} />;
+      photo = (
+        <TouchableHighlight onPress={this._openPlaceInMaps}>
+          <Image style={styles.photo} source={{uri: this.state.placePhotoUrl}} />
+        </TouchableHighlight>
+      )
     }
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
+        <Text style={styles.welcome} onPress={this._openPlaceInMaps}>
           {this.state.place.name}
         </Text>
         {photo}
-        <Text style={styles.instructions}>
+        <Text style={styles.address} onPress={this._openPlaceInMaps}>
           {this.state.place.vicinity}
         </Text>
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
@@ -96,13 +103,13 @@ class PlaceRoulette extends Component {
           position.coords.latitude,
           position.coords.longitude,
           (places) => {
-            var place = places[Math.floor(Math.random()*places.length)];
-            var placePhotoUrl = null;
+            let place = places[Math.floor(Math.random()*places.length)];
+            let placePhotoUrl = null;
             if (place.photos && place.photos.length > 0) {
               placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?" + Qs.stringify({
                 photoreference: place.photos[0].photo_reference,
-                maxwidth: 200,
-                maxheight: 200,
+                maxwidth: 600,
+                maxheight: 400,
                 key: Secrets.GOOGLE_PLACES_API_KEY,
               });
             }
@@ -117,6 +124,11 @@ class PlaceRoulette extends Component {
       },
       this._onLoadingLocationError,
     )
+  }
+
+  _openPlaceInMaps(event) {
+    let url = "http://maps.apple.com/?daddr=" + this.state.place.vicinity;
+    Linking.openURL(url);
   }
 
   _onLoadingLocationError(errorMessage) {
@@ -197,9 +209,16 @@ const styles = StyleSheet.create({
     color: '#bbb',
   },
   photo: {
-    width: 200,
+    width: 300,
     height: 200,
     margin: 10,
+  },
+  address: {
+    textAlign: 'center',
+    textDecorationLine: 'underline',
+    color: '#00bfff',
+    fontSize: 18,
+    marginBottom: 40,
   }
 });
 
