@@ -70,8 +70,8 @@ class PlaceRoulette extends Component {
         this._findNearbyPlaces(
           position.coords.latitude,
           position.coords.longitude,
-          (response) => {
-            console.log("RESPONSE", response);
+          (places) => {
+            console.log("RESPONSE", places);
             this.setState({loading: false});
           },
           this._onLoadingLocationError,
@@ -105,8 +105,11 @@ class PlaceRoulette extends Component {
     fetch(url, {method: 'GET'})
       .then((response) => response.json())
       .then((responseJson) => {
-        if (responseJson.status === "OK") {
-          onSuccess(responseJson);
+        if (responseJson.status === "OK" && responseJson.results.length > 0) {
+          onSuccess(responseJson.results);
+        }
+        else if (responseJson.status === "OK") {
+          onError("No places found that are nearby and currently open.")
         }
         else {
           console.log(responseJson);
