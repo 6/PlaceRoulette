@@ -1,6 +1,10 @@
 ## first-time setup
 
+Follow instructions here under "Requirements": https://facebook.github.io/react-native/docs/getting-started.html
+
 ```
+git clone git@github.com:6/PlaceRoulette.git
+cd PlaceRoulette
 npm install
 ```
 
@@ -10,7 +14,7 @@ npm install
 react-native run-ios
 ```
 
-In Simulator, make sure that you enable Location under Debug > Location.
+In Simulator, make sure that you enable a valid Location under Debug > Location.
 
 Press `ctrl + cmd + z` to open debugger UI in Chrome.
 
@@ -24,6 +28,6 @@ Press `ctrl + cmd + z` to open debugger UI in Chrome.
 ## update icon
 
 1. edit `icon/icon.sketch` and export to png of 1024px or greater
-1. upload to http://icon.angrymarmot.org/
+1. upload to http://icon.angrymarmot.org/ and click Generate
 1. open Xcode > Images.xcassets > AppIcon
-1. drag and drop the generate icons into AppIcon
+1. drag and drop the generated icons into AppIcon
