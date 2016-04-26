@@ -20,3 +20,10 @@ Press `ctrl + cmd + z` to open debugger UI in Chrome.
 1. open AppDelegate.m in Xcode
 1. uncomment line that says `jsCodeLocation = [[NSBundle mainBundle] ...`
 1. press the "play" button
+
+## update icon
+
+1. edit `icon/icon.sketch` and export to png of 1024px or greater
+1. upload to http://icon.angrymarmot.org/
+1. open Xcode > Images.xcassets > AppIcon
+1. drag and drop the generate icons into AppIcon
