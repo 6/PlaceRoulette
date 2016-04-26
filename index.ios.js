@@ -10,6 +10,7 @@ import React, {
   DeviceEventEmitter,
   StyleSheet,
   Text,
+  Image,
   View
 } from 'react-native';
 import Button from 'react-native-button';
@@ -31,6 +32,9 @@ class PlaceRoulette extends Component {
   render() {
     if(this.state.loading) {
       return this._renderLoadingView();
+    }
+    else if (this.state.place) {
+      return this._renderPlaceView();
     }
     else {
       return this._renderRouletteView();
@@ -63,6 +67,27 @@ class PlaceRoulette extends Component {
     );
   }
 
+  _renderPlaceView() {
+    var photo = null;
+    if (this.state.placePhotoUrl) {
+      photo = <Image style={styles.photo} source={{uri: this.state.placePhotoUrl}} />;
+    }
+    return (
+      <View style={styles.container}>
+        <Text style={styles.welcome}>
+          {this.state.place.name}
+        </Text>
+        {photo}
+        <Text style={styles.instructions}>
+          {this.state.place.vicinity}
+        </Text>
+        <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
+          Spin!
+        </Button>
+      </View>
+    )
+  }
+
   _handleRoulettePress(event) {
     this.setState({loading: true});
     this._getCurrentLocation(
@@ -71,8 +96,21 @@ class PlaceRoulette extends Component {
           position.coords.latitude,
           position.coords.longitude,
           (places) => {
-            console.log("RESPONSE", places);
-            this.setState({loading: false});
+            var place = places[Math.floor(Math.random()*places.length)];
+            var placePhotoUrl = null;
+            if (place.photos && place.photos.length > 0) {
+              placePhotoUrl = "https://maps.googleapis.com/maps/api/place/photo?" + Qs.stringify({
+                photoreference: place.photos[0].photo_reference,
+                maxwidth: 200,
+                maxheight: 200,
+                key: Secrets.GOOGLE_PLACES_API_KEY,
+              });
+            }
+            this.setState({
+              loading: false,
+              place: place,
+              placePhotoUrl: placePhotoUrl,
+            });
           },
           this._onLoadingLocationError,
         );
@@ -158,6 +196,11 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: '#bbb',
   },
+  photo: {
+    width: 200,
+    height: 200,
+    margin: 10,
+  }
 });
 
 AppRegistry.registerComponent('PlaceRoulette', () => PlaceRoulette);
