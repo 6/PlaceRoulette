@@ -13,15 +13,19 @@ import React, {
   View
 } from 'react-native';
 import Button from 'react-native-button';
-var { RNLocation: Location } = require('NativeModules');
+import Qs from 'qs';
+import Secrets from './secrets';
 
 class PlaceRoulette extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
+      searchRadius: 1000, // meters
+      placeType: "restaurant", // cafe, bar, night_club, bakery, store
     };
     this._handleRoulettePress = this._handleRoulettePress.bind(this);
+    this._onLoadingLocationError = this._onLoadingLocationError.bind(this);
   }
 
   render() {
@@ -50,7 +54,7 @@ class PlaceRoulette extends Component {
           Place Roulette
         </Text>
         <Text style={styles.instructions}>
-          Choose a random place within 0.5 miles:
+          Choose a random place within 1km:
         </Text>
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
           Spin!
@@ -61,20 +65,44 @@ class PlaceRoulette extends Component {
 
   _handleRoulettePress(event) {
     this.setState({loading: true});
-    navigator.geolocation.getCurrentPosition(
+    this._getCurrentLocation(
       (position) => {
-        this.setState({loading: false});
-        AlertIOS.alert(
-         'Thanks!',
-         "Your current position is: " + JSON.stringify(position),
+        this._findNearbyPlaces(
+          position.coords.latitude,
+          position.coords.longitude,
+          () => {
+            this.setState({loading: false});
+          },
+          this._onLoadingLocationError,
         );
       },
-      (error) => {
-        this.setState({loading: false});
-        alert(error.message);
-      },
+      this._onLoadingLocationError,
+    )
+  }
+
+  _onLoadingLocationError(errorMessage) {
+    this.setState({loading: false});
+    alert(errorMessage);
+  }
+
+  _getCurrentLocation(onSuccess, onError) {
+    navigator.geolocation.getCurrentPosition(
+      onSuccess,
+      (error) => onError(error.message),
       {enableHighAccuracy: true, timeout: 20000, maximumAge: 1000},
     );
+  }
+
+  _findNearbyPlaces(latitude, longitude, onSuccess, onError) {
+    let url = 'https://maps.googleapis.com/maps/api/place/nearbysearch/json?' + Qs.stringify({
+      location: [latitude, longitude].join(","),
+      radius: this.state.searchRadius,
+      opennow: "true",
+      type: this.state.placeType,
+      key: Secrets.GOOGLE_PLACES_API_KEY,
+    });
+    console.log(url);
+    onSuccess();
   }
 }
 
