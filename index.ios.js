@@ -56,10 +56,10 @@ class PlaceRoulette extends Component {
   _renderRouletteView() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
+        <Text style={[styles.baseText, styles.header]}>
           Place Roulette
         </Text>
-        <Text style={styles.instructions}>
+        <Text style={[styles.baseText, styles.instructions]}>
           Choose a random place within 1km:
         </Text>
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
@@ -80,11 +80,11 @@ class PlaceRoulette extends Component {
     }
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome} onPress={this._openPlaceInMaps}>
+        <Text style={[styles.baseText, styles.header]} onPress={this._openPlaceInMaps}>
           {this.state.place.name}
         </Text>
         {photo}
-        <Text style={styles.address} onPress={this._openPlaceInMaps}>
+        <Text style={[styles.baseText, styles.address]} onPress={this._openPlaceInMaps}>
           {this.state.place.vicinity}
         </Text>
         <Button containerStyle={styles.rouletteButton} style={styles.rouletteButtonText} onPress={this._handleRoulettePress}>
@@ -125,17 +125,22 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fafafa',
+    backgroundColor: '#E0FFFF',
     padding: 30,
   },
-  welcome: {
+  baseText: {
+    fontFamily: 'Avenir-Light',
+  },
+  header: {
     fontSize: 30,
     textAlign: 'center',
     margin: 10,
+    fontFamily: 'Avenir-Heavy',
+    color: '#2761be',
   },
   instructions: {
     textAlign: 'center',
-    color: '#555',
+    color: '#6495ED',
     fontSize: 18,
     marginBottom: 40,
   },
@@ -144,12 +149,13 @@ const styles = StyleSheet.create({
     paddingBottom: 24,
     paddingLeft: 40,
     paddingRight: 40,
-    backgroundColor: 'orange',
+    backgroundColor: '#ffaf1a',
     borderRadius: 20,
   },
   rouletteButtonText: {
     fontSize: 36,
-    color: 'green',
+    color: 'white',
+    fontFamily: 'GillSans-UltraBold',
   },
   loadingIndicator: {
     alignItems: 'center',
