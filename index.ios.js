@@ -70,7 +70,8 @@ class PlaceRoulette extends Component {
         this._findNearbyPlaces(
           position.coords.latitude,
           position.coords.longitude,
-          () => {
+          (response) => {
+            console.log("RESPONSE", response);
             this.setState({loading: false});
           },
           this._onLoadingLocationError,
@@ -101,8 +102,21 @@ class PlaceRoulette extends Component {
       type: this.state.placeType,
       key: Secrets.GOOGLE_PLACES_API_KEY,
     });
-    console.log(url);
-    onSuccess();
+    fetch(url, {method: 'GET'})
+      .then((response) => response.json())
+      .then((responseJson) => {
+        if (responseJson.status === "OK") {
+          onSuccess(responseJson);
+        }
+        else {
+          console.log(responseJson);
+          onError("Invalid request to Google Places API.");
+        }
+      })
+      .catch((error) => {
+        console.log(error);
+        onError("Unable to reach Google Places API.");
+      });
   }
 }
 
